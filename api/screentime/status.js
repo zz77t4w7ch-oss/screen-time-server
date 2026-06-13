@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   const URL = process.env.UPSTASH_REDIS_REST_URL;
   const TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
   const now = Date.now();
