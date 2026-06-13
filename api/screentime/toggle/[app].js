@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   const app = decodeURIComponent(req.query.app);
   const URL = process.env.UPSTASH_REDIS_REST_URL;
   const TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -25,6 +26,7 @@ export default async function handler(req, res) {
     usage[app].count += 1;
     usage[app].total += duration;
     await redis(["SET", "usage:" + today, JSON.stringify(usage)]);
+    await redis(["EXPIRE", "usage:" + today, 86400]);
     await redis(["SET", "state:" + app, "close"]);
     await redis(["SADD", "apps", app]);
     return res.status(200).json({ app, action: "close", duration });
